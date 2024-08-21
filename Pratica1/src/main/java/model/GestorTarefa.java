@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -56,7 +57,8 @@ public class GestorTarefa {
                     rs.getString("id"), 
                     rs.getString("titulo"), 
                     rs.getString("descricao"),
-                    rs.getString("categoria"));
+                    rs.getString("categoria"),
+                        rs.getInt("status"));
             }
             conn.close();
         } catch (SQLException e) {
@@ -80,6 +82,40 @@ public class GestorTarefa {
                     rs.getString("descricao"),
                     rs.getString("categoria"),
                     rs.getInt("status")
+                ));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println("Erro: " + e.getMessage());
+            System.exit(1);
+        }
+        return lista;
+    }
+
+    public static ArrayList<Tarefa> getAllTarefasWithQ(String flag, String q) {
+
+        ArrayList<Tarefa> lista = new ArrayList();
+        try {
+            var conn = Conexao.conexao();
+            PreparedStatement pstmt = null;
+            var sql = "";
+            if (flag.equals("categoria")) {
+                sql = "SELECT id, titulo, descricao, categoria, status FROM tarefas WHERE categoria = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, q);
+            } else {
+                sql = "SELECT id, titulo, descricao, categoria, status FROM tarefas WHERE status = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, Integer.parseInt(q));
+            }
+            var rs = pstmt.executeQuery();
+            while (rs.next()) {
+                lista.add(new Tarefa(
+                        rs.getString("id"),
+                        rs.getString("titulo"),
+                        rs.getString("descricao"),
+                        rs.getString("categoria"),
+                        rs.getInt("status")
                 ));
             }
             conn.close();

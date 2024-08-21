@@ -26,12 +26,15 @@ public class Sistema {
 │                                      │
 └──────────────────────────────────────┘
     - Opções:
-        n      -> Nova tarefa;
-        l      -> Listar todas as tarefas;
-        e <id> -> Edita tarefa com o id especificado; 
-        d <id> -> Exclui tarefa com o id especificao;
-        h      -> Mostra esse menu que você esta vendo;
-        q      -> Sair da aplicação;
+        n               -> Nova tarefa;
+        l <flag?> <q?>  -> Listar todas as tarefas;
+        e <id>          -> Edita tarefa com o id especificado; 
+        d <id>          -> Exclui tarefa com o id especificao;
+        h               -> Mostra esse menu que você esta vendo;
+        q               -> Sair da aplicação;
+    - OBS: 
+        <>  -> obrigatorio;
+        <?> -> opcional;
 
             """);
         System.out.flush();
@@ -68,6 +71,39 @@ public class Sistema {
         System.out.println("+-");
     }
 
+    private void listarTarefasComQ(String flag, String q) {
+        this.limparTela();
+        if (flag.equals("categoria") || flag.equals("status")) {
+            if (flag.equals("status")) {
+                if (q.equals("concluido")) {
+                    q = "1";
+                } else if (q.equals("pendente")) {
+                    q = "0";
+                } else {
+                    System.err.println("[ERR] Status inválido.");
+                    return;
+                }
+            }
+            ArrayList<Tarefa> listaTarefa = this.gestor.getAllTarefasWithQ(flag, q);
+            for (Tarefa tarefa: listaTarefa) {
+                System.out.println("+-");
+                System.out.println("|Id: " + tarefa.getId());
+                System.out.println("|Titulo: " + tarefa.titulo);
+                System.out.println("|Descrição: " + tarefa.descricao);
+                System.out.println("|Categoria: " + tarefa.categoria);
+                String status = "pendente";
+                if (tarefa.status != 0) {
+                    status = "concluido";
+                }
+                System.out.println("|Status: " + status);
+            }
+            System.out.println("+-");
+            return;
+        }
+        System.err.println("[ERR] categoria inválida");
+        return;
+    }
+
     private void editarTarefa(String id) {
         this.limparTela();
         Tarefa tarefa = this.gestor.getTarefa(id);
@@ -81,7 +117,7 @@ public class Sistema {
         System.out.println("|Descrição: " + tarefa.descricao);
         System.out.println("|Categoria: " + tarefa.categoria);
         String status = "pendente";
-        if (tarefa.status != 0) {
+        if (tarefa.status == 1) {
             status = "concluido";
         }
         System.out.println("|Status: " + status);
@@ -93,11 +129,11 @@ public class Sistema {
         tarefa.descricao = sc.nextLine();
         System.out.print("->> Categoria: ");
         tarefa.categoria = sc.nextLine();
-        System.out.print("->> Status (1 = concluido | 0 = pendente): ");
+        System.out.print("->> Status: ");
         status = sc.nextLine();
-        if (status.equals("1")) {
+        if (status.equals("concluido")) {
             tarefa.concluir();
-        } else if (status.equals("0")) {
+        } else if (status.equals("pendente")) {
             tarefa.status = 0;
         } else {
             System.err.print("[ERR] Status inválido.");
@@ -128,6 +164,10 @@ public class Sistema {
                 this.novaTarefa();
                 break;
             case "l":
+                if (input.length == 3) {
+                    this.listarTarefasComQ(input[1], input[2]);
+                    break;
+                }
                 this.listarTarefas();
                 break;
             case "e":
