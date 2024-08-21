@@ -1,0 +1,4 @@
+build
+.gradle
+.migrations_hist
+database.db
