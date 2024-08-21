@@ -28,20 +28,19 @@ public class GestorTarefa {
         }
     }
 
-    public static boolean deleteTarefa(String id) {
-        boolean result = false;
+    public static void deleteTarefa(String id) {
         try {
             var conn = Conexao.conexao();
             var sql = "DELETE FROM tarefas WHERE id = ?";
             var pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, id);
-            result = pstmt.execute();
+            pstmt.execute();
             conn.close();
         } catch (SQLException e) {
             System.err.println("Erro: " + e.getMessage());
             System.exit(1);
         }
-        return result;
+        return;
     }
 
     public static Tarefa getTarefa(String id) {

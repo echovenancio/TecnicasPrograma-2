@@ -1,6 +1,15 @@
 plugins {
     id 'java'
+    id 'application'
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'App'  // Replace with your main class
+    }
+}
+
+mainClassName = 'App'
 
 java {
     sourceCompatibility = '17'
@@ -13,12 +22,3 @@ repositories {
 dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
 }
-
-task run(type: JavaExec) {
-    group = 'application'
-    description = 'Builds and runs the application'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'App'
-}
-
-run.dependsOn(build)
