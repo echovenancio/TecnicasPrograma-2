@@ -84,6 +84,7 @@ public class Cli {
             }
             for (LogEntry logEntry: historico) {
                 System.out.println("├─────────────────────────────────");
+                System.out.println("│Id: " + logEntry.rowid());
                 System.out.println("│Cep: " + logEntry.cep());
                 System.out.println("│Logradouro: " + logEntry.logradouro());
                 System.out.println("│Localidade: " + logEntry.localidade());
